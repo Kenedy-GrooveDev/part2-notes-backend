@@ -3,12 +3,6 @@ const express = require("express");
 const mongoose = require('mongoose')
 const Note = require('./models/note')
 
-if (process.argv.length < 3) {
-  console.log("give a password as argument")
-  process.exit(1)
-}
-
-
 const app = express();
 
 app.use(express.static("dist"));
