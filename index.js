@@ -1,27 +1,17 @@
+require('dotenv').config()
 const express = require("express");
-const cors = require("cors");
+const mongoose = require('mongoose')
+const Note = require('./models/note')
+
+if (process.argv.length < 3) {
+  console.log("give a password as argument")
+  process.exit(1)
+}
+
+
 const app = express();
 
-app.use(cors());
 app.use(express.static("dist"));
-
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true,
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
 
 app.use(express.json());
 
@@ -40,7 +30,9 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/notes", (request, response) => {
-  response.json(notes);
+  Note.find({}).then(result => {
+    response.json(result);
+  })
 });
 
 app.get("/api/notes/:id", (request, response) => {
