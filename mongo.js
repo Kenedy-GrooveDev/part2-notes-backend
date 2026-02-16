@@ -27,11 +27,6 @@ const Note = mongoose.model('Note', noteSchema)
 //   important: true,
 // });
 
-const notes = [
-  { content: 'HTML is easy', date: new Date(), important: true },
-  { content: 'CSS is hard', date: new Date(), important: true },
-  { content: 'Mongoose makes things easy', date: new Date(), important: true },
-]
 
 // Note.insertMany(notes).then(result => {
 //   console.log(`${result} \n saved successfully`);
