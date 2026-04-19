@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js",
-    "test": "node --test",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=deevelopment node --watch index.js",
+    "test": "cross-env NODE_ENV=test node --test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build:ui": "rm -rf dist && cd ../part2-notes-frontend && npm run build && cp -r dist ../part2-notes-backend",
@@ -25,6 +25,7 @@
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.7.1",
     "eslint": "^10.0.0",
-    "globals": "^17.3.0"
+    "globals": "^17.3.0",
+    "supertest": "^7.2.2"
   }
 }

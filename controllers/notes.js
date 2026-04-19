@@ -1,24 +1,29 @@
 const noteRouter = require('express').Router()
+const note = require('../models/note')
 const Note = require('../models/note')
+const { error } = require('../utils/logger')
 
-noteRouter.get('/', (request, response) => {
-  Note.find({}).then((notes) => {
-    response.json(notes)
-  })
+noteRouter.get('/notes', async (request, response) => {
+  const notes = await Note.find({})
+  response.json(notes)
 })
 
-noteRouter.get('/:id', (request, response, next) => {
+noteRouter.get('/notes/:id', async (request, response, next) => {
   const id = request.params.id
-  Note.findById(id)
-    .then((note) => {
-      if (!note)
-        return response.status(404).json({ error: 'note not found' })
-      response.json(note)
-    })
-    .catch((error) => next(error))
+
+  try{
+    const note = await Note.findById(id)
+
+    if(!note) {
+      return response.status(404).json({error: "Note not found"})
+    }
+    response.json(note)
+  }catch (error) {
+    next(error)
+  }
 })
 
-noteRouter.post('/', (request, response, next) => {
+noteRouter.post('/notes', async (request, response, next) => {
   const body = request.body
 
   if (!body.content || body.content === '') {
@@ -29,35 +34,61 @@ noteRouter.post('/', (request, response, next) => {
     important: body.important ?? false,
   })
 
-  note.save().then(savedNote => {
+  try {
+    const savedNote = await note.save()
     response.status(201).json(savedNote)
-  }).catch(error => next(error))
+  }catch (error) {
+    next(error)
+  }
 })
 
-noteRouter.delete('/:id', (request, response, next) => {
+noteRouter.delete('/notes/:id', async (request, response, next) => {
   const id = request.params.id
-  Note.findByIdAndDelete(id)
-    .then((note) => {
-      if (!note) return response.status(404).json({ error: 'note not found' })
-      response.status(204).end()
-    })
-    .catch((error) => next(error))
+
+  try {
+    const note = await Note.findByIdAndDelete(id)
+
+    console.log(note)
+
+    if (!note) {
+      return response.status(404).json({error: "Note not found"})
+    }
+
+    response.status(204).end()
+  }catch (error) {
+    next(error)
+  }
+
 })
 
-noteRouter.put('/:id', (request, response, next) => {
+noteRouter.put('/notes/:id', async (request, response, next) => {
   const { content, important } = request.body
   const id = request.params.id
-  Note.findById(id)
-    .then((note) => {
-      if (!note) return response.status(404).json({ error: 'note not found' })
-      note.content = content
-      note.important = important ?? false
 
-      return note.save().then(updatedNote => {
-        response.json(updatedNote)
-      })
-    })
-    .catch((error) => next(error))
+  try {
+    const note = await Note.findById(id)
+    
+    if (!note) return response.status(404).json({ error: 'note not found' })
+    
+    note.content = content
+    note.important = important ?? note.important
+
+    const updatedNote = await note.save()
+    response.json(updatedNote)
+  } catch (error) {
+    next(error)
+  }
+  
+})
+
+noteRouter.get('/length', async (request, response, next) => {
+  try {
+    const notes = await Note.find({})
+
+    response.send(`<p>${notes.length}</p>`)
+  }catch (error) {
+    next(error)
+  }
 })
 
 module.exports = noteRouter

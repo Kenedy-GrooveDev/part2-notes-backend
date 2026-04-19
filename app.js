@@ -22,7 +22,7 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/app/notes/', noteRouter)
+app.use('/app/', noteRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
