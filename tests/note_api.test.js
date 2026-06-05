@@ -42,14 +42,28 @@ describe('when there is initially some notes saved', () => {
 })
 
 describe('viewing a specific note', () => {
-  test('a specific note can be viewed', async () => {
-    const noteAtStart = await helper.notesInDb()
-    const noteToView = noteAtStart[0]
+  test('succeeds with a valid id', async () => {
+    const notesAtStart = await helper.notesInDb()
+    const noteToView = notesAtStart[0]
 
-    await api
+    const resultNote = await api
       .get(`/app/notes/${noteToView.id}`)
       .expect(200)
-      .expect('content-type', /application\/json/)
+      .expect('Content-Type', /application\/json/)
+
+    assert.deepStrictEqual(resultNote.body, noteToView)
+  })
+
+  test('fails with statuscode 404 if note does not exist', async () => {
+    const validNonexistingId = await helper.nonExistingId()
+
+    await api.get(`/app/notes/${validNonexistingId}`).expect(404)
+  })
+
+  test('fails with statuscode 400 id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api.get(`/app/notes/${invalidId}`).expect(400)
   })
 })
 
