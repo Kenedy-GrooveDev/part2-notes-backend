@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=deevelopment node --watch index.js",
-    "test": "cross-env NODE_ENV=test node --test",
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development node --watch index.js",
+    "test": "NODE_ENV=test node --test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build:ui": "rm -rf dist && cd ../part2-notes-frontend && npm run build && cp -r dist ../part2-notes-backend",
