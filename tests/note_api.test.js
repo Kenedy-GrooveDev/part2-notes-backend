@@ -1,10 +1,12 @@
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const Note = require('../models/note')
+const User = require('../models/user')
 
 const api = supertest(app)
 
@@ -14,7 +16,13 @@ beforeEach(async () => {
   //   let noteObject = new Note(note)
   //   await noteObject.save()
   // }
+
   await Note.insertMany(helper.initialNotes)
+  await User.deleteMany({})
+  const saltRounds = 10
+  const password = await bcrypt.hash('@Kenedy123', saltRounds)
+  const user = new User({ username: 'Kenedy', passwordHash: password })
+  await user.save()
 })
 
 
@@ -70,9 +78,12 @@ describe('viewing a specific note', () => {
 
 describe('addition of a note', () => {
   test('succeeds with valid data', async () => {
+    const userAtStart = await helper.userInDb()
+    const uID = userAtStart.map(u => u.id)
     const newNote = {
       content: 'async/await simplifies making async calls',
       important: true,
+      userId: uID[0]
     }
 
     await api

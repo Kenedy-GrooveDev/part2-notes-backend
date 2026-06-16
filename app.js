@@ -4,6 +4,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const noteRouter = require('./controllers/notes')
+const usersRouter = require('./controllers/users')
 // const dns = require('node:dns')
 
 // // Force Node to use public DNS servers for SRV record lookups
@@ -31,7 +32,9 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
-app.use('/app/', noteRouter)
+app.use('/app/notes', noteRouter)
+app.use('/app/users', usersRouter)
+
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
