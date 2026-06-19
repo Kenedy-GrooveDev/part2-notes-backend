@@ -3,7 +3,7 @@ const User = require('../models/user')
 const middleware = require('../utils/middleware')
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('notes',{ content: 1, importance: 1 })
   response.json(users)
 })
 

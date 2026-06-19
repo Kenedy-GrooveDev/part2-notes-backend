@@ -25,7 +25,6 @@ beforeEach(async () => {
   await user.save()
 })
 
-
 describe('when there is initially some notes saved', () => {
   test('notes returned as json', async () => {
     console.log('entered test')
@@ -46,7 +45,6 @@ describe('when there is initially some notes saved', () => {
 
     assert.strictEqual(contents.includes('HTML is easy'), true)
   })
-
 })
 
 describe('viewing a specific note', () => {
@@ -75,15 +73,14 @@ describe('viewing a specific note', () => {
   })
 })
 
-
 describe('addition of a note', () => {
   test('succeeds with valid data', async () => {
     const userAtStart = await helper.userInDb()
-    const uID = userAtStart.map(u => u.id)
+    const uID = userAtStart.map((u) => u.id)
     const newNote = {
       content: 'async/await simplifies making async calls',
       important: true,
-      userId: uID[0]
+      userId: uID[0],
     }
 
     await api
@@ -97,6 +94,14 @@ describe('addition of a note', () => {
 
     const contents = notesAtEnd.map((n) => n.content)
     assert(contents.includes('async/await simplifies making async calls'))
+
+    const userAtEnd = await helper.userInDb()
+    const creator = userAtEnd.find((u) => u.id === newNote.userId)
+    const createdNote = notesAtEnd.find((note) =>
+      note.content.includes('async/await simplifies making async calls'),
+    )
+    const userInNote = createdNote.user.toJSON()
+    assert.strictEqual(creator.id, userInNote)
   })
 
   test('fails with status code 400 if data invalid', async () => {
